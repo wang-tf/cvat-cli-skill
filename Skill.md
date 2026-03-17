@@ -16,6 +16,7 @@ scripts:
   - scripts/auth_api.py
   - scripts/assets_api.py
   - scripts/labels_api.py
+  - scripts/server_api.py
 ---
 
 # CVAT SDK Skill
@@ -85,6 +86,11 @@ To use this skill, provide a JSON object with the following parameters:
 
 #### Implementations
 - `list_implementations`: List all implementations
+
+#### Server
+- `get_server_info`: Get server information
+- `get_server_health`: Get server health status
+- `get_server_config`: Get server configuration
 
 #### Lambda Functions
 - `list_lambdas`: List all lambda functions

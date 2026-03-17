@@ -10,7 +10,7 @@ class CVATCLITools:
         self.cvat_password = os.environ.get('CVAT_PASSWORD')
         self._check_config()
         self.client = None
-    
+
     def _check_config(self):
         if not all([self.cvat_api_url, self.cvat_username, self.cvat_password]):
             raise ValueError("Missing required environment variables: CVAT_API_URL, CVAT_USERNAME, CVAT_PASSWORD")
