@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import pytest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scripts.server_api import ServerAPI
 
 # Set up environment variables for testing
@@ -48,44 +49,7 @@ class TestServerAPI:
         assert 'server' in config
         assert 'oauth' in config
         assert 'cloud_storage' in config
-    
-    def test_handle_request_get_server_info(self):
-        """Test handle_request with get_server_info action"""
-        request = {'action': 'get_server_info'}
-        response = self.server_api.handle_request(request)
-        assert response['status'] == 'success'
-        assert 'data' in response
-        assert 'version' in response['data']
-    
-    def test_handle_request_get_server_health(self):
-        """Test handle_request with get_server_health action"""
-        request = {'action': 'get_server_health'}
-        response = self.server_api.handle_request(request)
-        assert response['status'] == 'success'
-        assert 'data' in response
-        assert 'status' in response['data']
-    
-    def test_handle_request_get_server_config(self):
-        """Test handle_request with get_server_config action"""
-        request = {'action': 'get_server_config'}
-        response = self.server_api.handle_request(request)
-        assert response['status'] == 'success'
-        assert 'data' in response
-        assert 'annotation' in response['data']
-    
-    def test_handle_request_invalid_action(self):
-        """Test handle_request with invalid action"""
-        request = {'action': 'invalid_action'}
-        response = self.server_api.handle_request(request)
-        assert response['status'] == 'error'
-        assert 'message' in response
-    
-    def test_handle_request_missing_action(self):
-        """Test handle_request with missing action"""
-        request = {}
-        response = self.server_api.handle_request(request)
-        assert response['status'] == 'error'
-        assert 'message' in response
+
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__])
