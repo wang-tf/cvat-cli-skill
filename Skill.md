@@ -13,6 +13,7 @@ scripts:
   - scripts/jobs_api.py
   - scripts/users_api.py
   - scripts/organizations_api.py
+  - scripts/auth_api.py
 ---
 
 # CVAT SDK Skill
