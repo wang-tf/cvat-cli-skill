@@ -3,6 +3,8 @@ name: CVAT CLI Skill
 description: A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI. Use this skill to execute CVAT CLI commands and manage annotation tasks.
 dependencies:
   - cvat-cli
+scripts:
+  - scripts/main.py
 ---
 
 # CVAT CLI Skill
