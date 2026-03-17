@@ -9,6 +9,7 @@ scripts:
   - scripts/projects_api.py
   - scripts/tasks_api.py
   - scripts/cloudstorages_api.py
+  - scripts/events_api.py
 ---
 
 # CVAT SDK Skill
