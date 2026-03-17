@@ -1,5 +1,6 @@
 ---
 name: CVAT SDK Skill
+version: 1.0.0
 description: A skill to interact with CVAT (Computer Vision Annotation Tool) via CVAT SDK. Use this skill to manage annotation tasks, projects, jobs, users, and implementations.
 dependencies:
   - cvat-sdk
