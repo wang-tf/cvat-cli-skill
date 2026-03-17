@@ -24,5 +24,5 @@ jobs:
 
       - name: Push to GitHub (使用个人令牌)
         run: |
-          cd feishu-remote-mcp-skill.git
-          git push --mirror https://wang-tf:${{ secrets.GH_PAT }}@github.com/wang-tf/feishu-remote-mcp-skill.git
+          cd cvat-cli-skill.git
+          git push --mirror https://wang-tf:${{ secrets.GH_PAT }}@github.com/wang-tf/cvat-cli-skill.git
