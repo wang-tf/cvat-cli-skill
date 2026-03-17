@@ -22,74 +22,7 @@ class CVATCLITools:
                 credentials=(self.cvat_username, self.cvat_password)
             )
     
-    # Tasks API
-    def list_tasks(self, filters=None):
-        self._connect()
-        tasks = list(self.client.tasks.list(filters=filters))
-        result = []
-        for task in tasks:
-            result.append({
-                "id": task.id,
-                "name": task.name,
-                "status": task.status,
-                "project_id": task.project_id,
-                "owner": task.owner,
-                "created_date": task.created_date.isoformat() if task.created_date else None
-            })
-        return result
-    
-    def get_task(self, task_id):
-        self._connect()
-        task = self.client.tasks.get(task_id)
-        return {
-            "id": task.id,
-            "name": task.name,
-            "status": task.status,
-            "project_id": task.project_id,
-            "owner": task.owner,
-            "created_date": task.created_date.isoformat() if task.created_date else None,
-            "labels": [label.name for label in task.labels],
-            "data": task.data,
-            "segments": [{
-                "id": segment.id,
-                "start_frame": segment.start_frame,
-                "stop_frame": segment.stop_frame
-            } for segment in task.segments]
-        }
-    
-    def create_task(self, name, labels=None, project_id=None, data=None):
-        self._connect()
-        task = self.client.tasks.create(
-            name=name,
-            labels=labels or [{"name": "object"}],
-            project_id=project_id,
-            data=data or []
-        )
-        return {
-            "id": task.id,
-            "name": task.name,
-            "status": task.status
-        }
-    
-    def update_task(self, task_id, name=None, status=None):
-        self._connect()
-        task = self.client.tasks.get(task_id)
-        if name:
-            task.name = name
-        if status:
-            task.status = status
-        task.update()
-        return {
-            "id": task.id,
-            "name": task.name,
-            "status": task.status
-        }
-    
-    def delete_task(self, task_id):
-        self._connect()
-        task = self.client.tasks.get(task_id)
-        task.delete()
-        return {"message": f"Task {task_id} deleted successfully"}
+
     
 
     

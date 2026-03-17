@@ -7,6 +7,7 @@ scripts:
   - scripts/cvat_cli_tools.py
   - scripts/lambda_api.py
   - scripts/projects_api.py
+  - scripts/tasks_api.py
 ---
 
 # CVAT SDK Skill

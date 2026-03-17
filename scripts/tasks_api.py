@@ -1,12 +1,9 @@
-"""
-https://docs.cvat.ai/docs/api_sdk/sdk/reference/apis/projects-api/
-"""
 import os
 import json
 import sys
 from cvat_sdk import make_client
 
-class ProjectsAPI:
+class TasksAPI:
     def __init__(self):
         self.cvat_api_url = os.environ.get('CVAT_API_URL')
         self.cvat_username = os.environ.get('CVAT_USERNAME')
@@ -25,30 +22,34 @@ class ProjectsAPI:
                 credentials=(self.cvat_username, self.cvat_password)
             )
     
-    # Projects API
-    def list_projects(self, filters=None):
+    # Tasks API
+    def list_tasks(self, filters=None):
         self._connect()
-        projects = list(self.client.projects.list(filters=filters))
+        tasks = list(self.client.tasks.list(filters=filters))
         result = []
-        for project in projects:
+        for task in tasks:
             result.append({
-                "id": project.id,
-                "name": project.name,
-                "owner": project.owner,
-                "created_date": project.created_date.isoformat() if project.created_date else None,
-                "status": project.status
+                "id": task.id,
+                "name": task.name,
+                "status": task.status,
+                "project_id": task.project_id,
+                "owner": task.owner,
+                "created_date": task.created_date.isoformat() if task.created_date else None,
+                "updated_date": task.updated_date.isoformat() if task.updated_date else None
             })
         return result
     
-    def get_project(self, project_id):
+    def get_task(self, task_id):
         self._connect()
-        project = self.client.projects.get(project_id)
+        task = self.client.tasks.get(task_id)
         return {
-            "id": project.id,
-            "name": project.name,
-            "owner": project.owner,
-            "created_date": project.created_date.isoformat() if project.created_date else None,
-            "status": project.status,
+            "id": task.id,
+            "name": task.name,
+            "status": task.status,
+            "project_id": task.project_id,
+            "owner": task.owner,
+            "created_date": task.created_date.isoformat() if task.created_date else None,
+            "updated_date": task.updated_date.isoformat() if task.updated_date else None,
             "labels": [{
                 "name": label.name,
                 "color": label.color,
@@ -57,68 +58,76 @@ class ProjectsAPI:
                     "mutable": attr.mutable,
                     "values": attr.values
                 } for attr in label.attributes]
-            } for label in project.labels],
-            "tasks": [task.id for task in project.tasks]
+            } for label in task.labels],
+            "data": task.data,
+            "segments": [{
+                "id": segment.id,
+                "start_frame": segment.start_frame,
+                "stop_frame": segment.stop_frame
+            } for segment in task.segments],
+            "jobs": [job.id for job in task.jobs]
         }
     
-    def create_project(self, name, labels=None, status=None):
+    def create_task(self, name, labels=None, project_id=None, data=None, status=None):
         self._connect()
-        project = self.client.projects.create(
+        task = self.client.tasks.create(
             name=name,
             labels=labels or [{"name": "object"}],
+            project_id=project_id,
+            data=data or [],
             status=status
         )
         return {
-            "id": project.id,
-            "name": project.name,
-            "status": project.status
+            "id": task.id,
+            "name": task.name,
+            "status": task.status
         }
     
-    def update_project(self, project_id, name=None, status=None):
+    def update_task(self, task_id, name=None, status=None):
         self._connect()
-        project = self.client.projects.get(project_id)
+        task = self.client.tasks.get(task_id)
         if name:
-            project.name = name
+            task.name = name
         if status:
-            project.status = status
-        project.update()
+            task.status = status
+        task.update()
         return {
-            "id": project.id,
-            "name": project.name,
-            "status": project.status
+            "id": task.id,
+            "name": task.name,
+            "status": task.status
         }
     
-    def delete_project(self, project_id):
+    def delete_task(self, task_id):
         self._connect()
-        project = self.client.projects.get(project_id)
-        project.delete()
-        return {"message": f"Project {project_id} deleted successfully"}
+        task = self.client.tasks.get(task_id)
+        task.delete()
+        return {"message": f"Task {task_id} deleted successfully"}
     
-    def add_labels_to_project(self, project_id, labels):
+    def add_labels_to_task(self, task_id, labels):
         self._connect()
-        project = self.client.projects.get(project_id)
+        task = self.client.tasks.get(task_id)
         for label in labels:
-            project.labels.append(label)
-        project.update()
+            task.labels.append(label)
+        task.update()
         return {
-            "id": project.id,
-            "labels": [label.name for label in project.labels]
+            "id": task.id,
+            "labels": [label.name for label in task.labels]
         }
     
-    def remove_label_from_project(self, project_id, label_name):
+    def remove_label_from_task(self, task_id, label_name):
         self._connect()
-        project = self.client.projects.get(project_id)
+        task = self.client.tasks.get(task_id)
         label_to_remove = None
-        for label in project.labels:
+        for label in task.labels:
             if label.name == label_name:
                 label_to_remove = label
                 break
         if label_to_remove:
-            project.labels.remove(label_to_remove)
-            project.update()
+            task.labels.remove(label_to_remove)
+            task.update()
         return {
-            "id": project.id,
-            "labels": [label.name for label in project.labels]
+            "id": task.id,
+            "labels": [label.name for label in task.labels]
         }
     
     def handle_request(self, request):
@@ -131,96 +140,98 @@ class ProjectsAPI:
                     "message": "Action is required"
                 }
             
-            # Projects actions
-            if action == "list_projects":
+            # Tasks actions
+            if action == "list_tasks":
                 filters = request.get('filters')
-                result = self.list_projects(filters)
+                result = self.list_tasks(filters)
                 return {
                     "status": "success",
-                    "message": "Projects listed successfully",
+                    "message": "Tasks listed successfully",
                     "data": result
                 }
-            elif action == "get_project":
-                project_id = request.get('project_id')
-                if not project_id:
+            elif action == "get_task":
+                task_id = request.get('task_id')
+                if not task_id:
                     return {
                         "status": "error",
-                        "message": "Project ID is required"
+                        "message": "Task ID is required"
                     }
-                result = self.get_project(project_id)
+                result = self.get_task(task_id)
                 return {
                     "status": "success",
-                    "message": "Project retrieved successfully",
+                    "message": "Task retrieved successfully",
                     "data": result
                 }
-            elif action == "create_project":
+            elif action == "create_task":
                 name = request.get('name')
                 if not name:
                     return {
                         "status": "error",
-                        "message": "Project name is required"
+                        "message": "Task name is required"
                     }
                 labels = request.get('labels')
+                project_id = request.get('project_id')
+                data = request.get('data')
                 status = request.get('status')
-                result = self.create_project(name, labels, status)
+                result = self.create_task(name, labels, project_id, data, status)
                 return {
                     "status": "success",
-                    "message": "Project created successfully",
+                    "message": "Task created successfully",
                     "data": result
                 }
-            elif action == "update_project":
-                project_id = request.get('project_id')
-                if not project_id:
+            elif action == "update_task":
+                task_id = request.get('task_id')
+                if not task_id:
                     return {
                         "status": "error",
-                        "message": "Project ID is required"
+                        "message": "Task ID is required"
                     }
                 name = request.get('name')
                 status = request.get('status')
-                result = self.update_project(project_id, name, status)
+                result = self.update_task(task_id, name, status)
                 return {
                     "status": "success",
-                    "message": "Project updated successfully",
+                    "message": "Task updated successfully",
                     "data": result
                 }
-            elif action == "delete_project":
-                project_id = request.get('project_id')
-                if not project_id:
+            elif action == "delete_task":
+                task_id = request.get('task_id')
+                if not task_id:
                     return {
                         "status": "error",
-                        "message": "Project ID is required"
+                        "message": "Task ID is required"
                     }
-                result = self.delete_project(project_id)
+                result = self.delete_task(task_id)
                 return {
                     "status": "success",
                     "message": result["message"]
                 }
-            elif action == "add_labels_to_project":
-                project_id = request.get('project_id')
+            elif action == "add_labels_to_task":
+                task_id = request.get('task_id')
                 labels = request.get('labels')
-                if not all([project_id, labels]):
+                if not all([task_id, labels]):
                     return {
                         "status": "error",
-                        "message": "Project ID and labels are required"
+                        "message": "Task ID and labels are required"
                     }
-                result = self.add_labels_to_project(project_id, labels)
+                result = self.add_labels_to_task(task_id, labels)
                 return {
                     "status": "success",
-                    "message": "Labels added to project successfully",
+                    "message": "Labels added to task successfully",
                     "data": result
                 }
-            elif action == "remove_label_from_project":
-                project_id = request.get('project_id')
+            elif action == "remove_label_from_task":
+                task_id = request.get('task_id')
                 label_name = request.get('label_name')
-                if not all([project_id, label_name]):
+                if not all([task_id, label_name]):
                     return {
                         "status": "error",
-                        "message": "Project ID and label name are required"
+                        "message": "Task ID and label name are required"
                     }
-                result = self.remove_label_from_project(project_id, label_name)
+                result = self.remove_label_from_task(task_id, label_name)
                 return {
                     "status": "success",
-                    "message": "Label removed from project successfully",
+                    "message": "Label removed from task successfully",
                     "data": result
                 }
             else:
@@ -244,7 +255,7 @@ def main():
     
     try:
         request = json.loads(sys.argv[1])
-        api = ProjectsAPI()
+        api = TasksAPI()
         response = api.handle_request(request)
         print(json.dumps(response))
     except json.JSONDecodeError:
