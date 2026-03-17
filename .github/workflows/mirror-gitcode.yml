@@ -20,7 +20,7 @@ jobs:
           else
             GITCODE_REPO_URL=${{ secrets.GITCODE_REPO_URL }}
           fi
-          git clone --mirror $GITCODE_REPO_URL feishu-remote-mcp-skill.git
+          git clone --mirror $GITCODE_REPO_URL cvat-cli-skill.git
 
       - name: Push to GitHub (使用个人令牌)
         run: |
