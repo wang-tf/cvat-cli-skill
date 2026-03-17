@@ -3,7 +3,7 @@ import subprocess
 import json
 import sys
 
-class CVATCLISkill:
+class CVATCLITools:
     def __init__(self):
         self.cvat_api_url = os.environ.get('CVAT_API_URL')
         self.cvat_username = os.environ.get('CVAT_USERNAME')
@@ -96,7 +96,7 @@ def main():
     
     try:
         request = json.loads(sys.argv[1])
-        skill = CVATCLISkill()
+        skill = CVATCLITools()
         response = skill.handle_request(request)
         print(json.dumps(response))
     except json.JSONDecodeError:

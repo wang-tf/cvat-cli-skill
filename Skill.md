@@ -4,7 +4,7 @@ description: A skill to interact with CVAT (Computer Vision Annotation Tool) via
 dependencies:
   - cvat-cli
 scripts:
-  - scripts/main.py
+  - scripts/cvat_cli_tools.py
 ---
 
 # CVAT CLI Skill
