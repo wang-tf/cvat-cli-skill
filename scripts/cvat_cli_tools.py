@@ -14,7 +14,7 @@ class CVATCLITools:
     def _check_config(self):
         if not all([self.cvat_api_url, self.cvat_username, self.cvat_password]):
             raise ValueError("Missing required environment variables: CVAT_API_URL, CVAT_USERNAME, CVAT_PASSWORD")
-    
+
     def _connect(self):
         if not self.client:
             self.client = make_client(
@@ -22,34 +22,6 @@ class CVATCLITools:
                 credentials=(self.cvat_username, self.cvat_password)
             )
 
-    # Jobs API
-    def list_jobs(self, filters=None):
-        self._connect()
-        jobs = list(self.client.jobs.list(filters=filters))
-        result = []
-        for job in jobs:
-            result.append({
-                "id": job.id,
-                "task_id": job.task_id,
-                "status": job.status,
-                "assignee": job.assignee,
-                "frame_count": job.frame_count
-            })
-        return result
-
-    def get_job(self, job_id):
-        self._connect()
-        job = self.client.jobs.get(job_id)
-        return {
-            "id": job.id,
-            "task_id": job.task_id,
-            "status": job.status,
-            "assignee": job.assignee,
-            "frame_count": job.frame_count,
-            "start_frame": job.start_frame,
-            "stop_frame": job.stop_frame
-        }
-    
     # Users API
     def list_users(self):
         self._connect()
