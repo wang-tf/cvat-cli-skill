@@ -1,11 +1,11 @@
-# CVAT CLI 技能
+# CVAT SDK 技能
 
-一个通过CLI与CVAT（计算机视觉标注工具）交互的技能，遵循Claude自定义技能规范。
+一个通过 CVAT SDK 与 CVAT（计算机视觉标注工具）交互的技能，遵循 Claude 自定义技能规范。
 
 ## 功能
 
-- 直接从Claude执行CVAT CLI命令
-- 支持所有CVAT CLI命令和参数
+- 全面访问 CVAT API 功能
+- 支持任务、项目、作业、用户和实现的管理
 - 通过环境变量进行配置
 - 适当的错误处理和响应格式
 
@@ -19,8 +19,8 @@
 
 1. 克隆此仓库：
    ```bash
-   git clone https://github.com/yourusername/cvat-cli-skill.git
-   cd cvat-cli-skill
+   git clone https://github.com/yourusername/cvat-sdk-skill.git
+   cd cvat-sdk-skill
    ```
 
 2. 安装依赖：
@@ -37,17 +37,16 @@
 
 ## 使用
 
-### 作为Claude技能
+### 作为 Claude 技能
 
-1. 将技能目录打包为zip文件
-2. 将其上传到Claude的技能管理界面
-3. 配置技能，填写您的CVAT API URL、用户名和密码
-4. 在Claude对话中使用技能：
+1. 将技能目录打包为 zip 文件
+2. 将其上传到 Claude 的技能管理界面
+3. 配置技能，填写您的 CVAT API URL、用户名和密码
+4. 在 Claude 对话中使用技能：
    ```
-   @CVAT CLI Skill
+   @CVAT SDK Skill
    {
-     "command": "tasks list",
-     "args": "--page_size 10"
+     "action": "list_tasks"
    }
    ```
 
@@ -56,42 +55,54 @@
 您可以通过以下命令在本地测试技能：
 
 ```bash
-python main.py '{"command": "tasks list", "args": "--page_size 10"}'
+python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
 ```
 
-## 命令参考
+## 支持的操作
 
-此技能支持所有CVAT CLI命令。一些常用命令包括：
+### 任务
+- `list_tasks` - 列出所有任务
+- `get_task` - 获取任务详情
+- `create_task` - 创建新任务
+- `update_task` - 更新任务
+- `delete_task` - 删除任务
 
-- `tasks list` - 列出所有任务
-- `tasks create` - 创建新任务
-- `tasks get` - 获取任务详情
-- `projects list` - 列出所有项目
-- `projects create` - 创建新项目
+### 项目
+- `list_projects` - 列出所有项目
+- `get_project` - 获取项目详情
+- `create_project` - 创建新项目
+- `update_project` - 更新项目
+- `delete_project` - 删除项目
 
-完整的命令列表，请运行 `cvat-cli --help`。
+### 作业
+- `list_jobs` - 列出所有作业
+- `get_job` - 获取作业详情
+
+### 用户
+- `list_users` - 列出所有用户
+- `get_user` - 获取用户详情
+
+### 实现
+- `list_implementations` - 列出所有实现
 
 ## 响应格式
 
-技能以JSON格式返回响应，结构如下：
+技能以 JSON 格式返回响应，结构如下：
 
 ```json
 {
   "status": "success" 或 "error",
   "message": "结果描述",
-  "data": {
-    "stdout": "命令输出",
-    "stderr": "命令错误（如果有）"
-  }
+  "data": "结果数据（如果适用）"
 }
 ```
 
 ## 故障排除
 
 - **缺少环境变量**：确保设置了所有必需的环境变量
-- **CVAT CLI未找到**：确保安装了`cvat-cli`并在PATH中
-- **认证错误**：验证您的CVAT API URL、用户名和密码
-- **命令错误**：检查响应中的`stderr`字段获取错误详情
+- **CVAT SDK 未找到**：确保安装了 `cvat-sdk`
+- **认证错误**：验证您的 CVAT API URL、用户名和密码
+- **API 错误**：检查响应中的 `message` 字段获取错误详情
 
 ## 许可证
 

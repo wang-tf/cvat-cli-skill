@@ -1,11 +1,11 @@
-# CVAT CLI Skill
+# CVAT SDK Skill
 
-A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI, following the Claude custom skill specification.
+A skill to interact with CVAT (Computer Vision Annotation Tool) via CVAT SDK, following the Claude custom skill specification.
 
 ## Features
 
-- Execute CVAT CLI commands directly from Claude
-- Support for all CVAT CLI commands and arguments
+- Comprehensive access to CVAT API capabilities
+- Support for tasks, projects, jobs, users, and implementations management
 - Configuration via environment variables
 - Proper error handling and response formatting
 
@@ -19,8 +19,8 @@ A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI, followi
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/cvat-cli-skill.git
-   cd cvat-cli-skill
+   git clone https://github.com/yourusername/cvat-sdk-skill.git
+   cd cvat-sdk-skill
    ```
 
 2. Install dependencies:
@@ -44,10 +44,9 @@ A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI, followi
 3. Configure the skill with your CVAT API URL, username, and password
 4. Use the skill in Claude conversations:
    ```
-   @CVAT CLI Skill
+   @CVAT SDK Skill
    {
-     "command": "tasks list",
-     "args": "--page_size 10"
+     "action": "list_tasks"
    }
    ```
 
@@ -56,20 +55,35 @@ A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI, followi
 You can test the skill locally by running:
 
 ```bash
-python main.py '{"command": "tasks list", "args": "--page_size 10"}'
+python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
 ```
 
-## Command Reference
+## Supported Actions
 
-This skill supports all CVAT CLI commands. Some common commands include:
+### Tasks
+- `list_tasks` - List all tasks
+- `get_task` - Get task details
+- `create_task` - Create a new task
+- `update_task` - Update a task
+- `delete_task` - Delete a task
 
-- `tasks list` - List all tasks
-- `tasks create` - Create a new task
-- `tasks get` - Get task details
-- `projects list` - List all projects
-- `projects create` - Create a new project
+### Projects
+- `list_projects` - List all projects
+- `get_project` - Get project details
+- `create_project` - Create a new project
+- `update_project` - Update a project
+- `delete_project` - Delete a project
 
-For a complete list of commands, run `cvat-cli --help`.
+### Jobs
+- `list_jobs` - List all jobs
+- `get_job` - Get job details
+
+### Users
+- `list_users` - List all users
+- `get_user` - Get user details
+
+### Implementations
+- `list_implementations` - List all implementations
 
 ## Response Format
 
@@ -79,19 +93,16 @@ The skill returns responses in JSON format with the following structure:
 {
   "status": "success" or "error",
   "message": "Description of the result",
-  "data": {
-    "stdout": "Command output",
-    "stderr": "Command errors (if any)"
-  }
+  "data": "Result data (if applicable)"
 }
 ```
 
 ## Troubleshooting
 
 - **Missing environment variables**: Ensure all required environment variables are set
-- **CVAT CLI not found**: Make sure `cvat-cli` is installed and in your PATH
+- **CVAT SDK not found**: Make sure `cvat-sdk` is installed
 - **Authentication errors**: Verify your CVAT API URL, username, and password
-- **Command errors**: Check the `stderr` field in the response for error details
+- **API errors**: Check the `message` field in the response for error details
 
 ## License
 

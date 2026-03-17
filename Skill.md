@@ -1,17 +1,17 @@
 ---
-name: CVAT CLI Skill
-description: A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI. Use this skill to execute CVAT CLI commands and manage annotation tasks.
+name: CVAT SDK Skill
+description: A skill to interact with CVAT (Computer Vision Annotation Tool) via CVAT SDK. Use this skill to manage annotation tasks, projects, jobs, users, and implementations.
 dependencies:
   - cvat-sdk
 scripts:
   - scripts/cvat_cli_tools.py
 ---
 
-# CVAT CLI Skill
+# CVAT SDK Skill
 
 ## Overview
 
-This skill allows you to execute CVAT (Computer Vision Annotation Tool) CLI commands directly from Claude. It supports all CVAT CLI commands and arguments, providing a seamless way to manage your annotation tasks.
+This skill allows you to interact with CVAT (Computer Vision Annotation Tool) directly through the CVAT SDK. It provides comprehensive access to CVAT's API capabilities, including managing tasks, projects, jobs, users, and implementations.
 
 ## Configuration
 
@@ -25,29 +25,81 @@ The skill requires the following environment variables to be set:
 
 To use this skill, provide a JSON object with the following parameters:
 
-- `command`: The CVAT CLI command to execute (required)
-- `args`: Additional arguments for the command (optional)
+- `action`: The API action to perform (required)
+- Additional parameters specific to the action
 
-### Example
+### Supported Actions
 
+#### Tasks
+- `list_tasks`: List all tasks
+  - Optional: `filters` - Filter criteria
+- `get_task`: Get task details
+  - Required: `task_id` - Task ID
+- `create_task`: Create a new task
+  - Required: `name` - Task name
+  - Optional: `labels` - List of labels
+  - Optional: `project_id` - Project ID
+  - Optional: `data` - List of data URLs
+- `update_task`: Update a task
+  - Required: `task_id` - Task ID
+  - Optional: `name` - New task name
+  - Optional: `status` - New task status
+- `delete_task`: Delete a task
+  - Required: `task_id` - Task ID
+
+#### Projects
+- `list_projects`: List all projects
+  - Optional: `filters` - Filter criteria
+- `get_project`: Get project details
+  - Required: `project_id` - Project ID
+- `create_project`: Create a new project
+  - Required: `name` - Project name
+  - Optional: `labels` - List of labels
+- `update_project`: Update a project
+  - Required: `project_id` - Project ID
+  - Optional: `name` - New project name
+- `delete_project`: Delete a project
+  - Required: `project_id` - Project ID
+
+#### Jobs
+- `list_jobs`: List all jobs
+  - Optional: `filters` - Filter criteria
+- `get_job`: Get job details
+  - Required: `job_id` - Job ID
+
+#### Users
+- `list_users`: List all users
+- `get_user`: Get user details
+  - Required: `user_id` - User ID
+
+#### Implementations
+- `list_implementations`: List all implementations
+
+### Examples
+
+#### List tasks
 ```json
 {
-  "command": "tasks list",
-  "args": "--page_size 10"
+  "action": "list_tasks"
 }
 ```
 
-## Supported Commands
+#### Get task details
+```json
+{
+  "action": "get_task",
+  "task_id": 1
+}
+```
 
-This skill supports all CVAT CLI commands, including:
-
-- `tasks list` - List all tasks
-- `tasks create` - Create a new task
-- `tasks get` - Get task details
-- `projects list` - List all projects
-- `projects create` - Create a new project
-
-For a complete list of commands, run `cvat-cli --help`.
+#### Create a project
+```json
+{
+  "action": "create_project",
+  "name": "New Project",
+  "labels": [{"name": "person"}, {"name": "car"}]
+}
+```
 
 ## Response Format
 
@@ -57,16 +109,13 @@ The skill returns responses in JSON format with the following structure:
 {
   "status": "success" or "error",
   "message": "Description of the result",
-  "data": {
-    "stdout": "Command output",
-    "stderr": "Command errors (if any)"
-  }
+  "data": "Result data (if applicable)"
 }
 ```
 
 ## Troubleshooting
 
 - **Missing environment variables**: Ensure all required environment variables are set
-- **CVAT CLI not found**: Make sure `cvat-cli` is installed and in your PATH
+- **CVAT SDK not found**: Make sure `cvat-sdk` is installed
 - **Authentication errors**: Verify your CVAT API URL, username, and password
-- **Command errors**: Check the `stderr` field in the response for error details
+- **API errors**: Check the `message` field in the response for error details
