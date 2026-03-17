@@ -22,31 +22,7 @@ class CVATCLITools:
                 credentials=(self.cvat_username, self.cvat_password)
             )
 
-    # Users API
-    def list_users(self):
-        self._connect()
-        users = list(self.client.users.list())
-        result = []
-        for user in users:
-            result.append({
-                "id": user.id,
-                "username": user.username,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "email": user.email
-            })
-        return result
-    
-    def get_user(self, user_id):
-        self._connect()
-        user = self.client.users.get(user_id)
-        return {
-            "id": user.id,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email
-        }
+
     
     # Implementations API
     def list_implementations(self):

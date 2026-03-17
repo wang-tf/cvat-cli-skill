@@ -11,6 +11,7 @@ scripts:
   - scripts/cloudstorages_api.py
   - scripts/events_api.py
   - scripts/jobs_api.py
+  - scripts/users_api.py
 ---
 
 # CVAT SDK Skill
