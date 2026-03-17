@@ -21,11 +21,7 @@ class CVATCLITools:
                 self.cvat_api_url,
                 credentials=(self.cvat_username, self.cvat_password)
             )
-    
 
-    
-
-    
     # Jobs API
     def list_jobs(self, filters=None):
         self._connect()
@@ -40,7 +36,7 @@ class CVATCLITools:
                 "frame_count": job.frame_count
             })
         return result
-    
+
     def get_job(self, job_id):
         self._connect()
         job = self.client.jobs.get(job_id)
