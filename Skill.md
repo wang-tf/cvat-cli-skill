@@ -14,6 +14,7 @@ scripts:
   - scripts/users_api.py
   - scripts/organizations_api.py
   - scripts/auth_api.py
+  - scripts/assets_api.py
 ---
 
 # CVAT SDK Skill

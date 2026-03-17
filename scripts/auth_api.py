@@ -1,3 +1,6 @@
+"""
+https://docs.cvat.ai/docs/api_sdk/sdk/reference/apis/auth-api/
+"""
 import os
 import json
 import sys
