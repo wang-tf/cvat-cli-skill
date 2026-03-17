@@ -22,8 +22,6 @@ class CVATCLITools:
                 credentials=(self.cvat_username, self.cvat_password)
             )
 
-
-    
     # Implementations API
     def list_implementations(self):
         self._connect()
