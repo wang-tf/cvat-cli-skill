@@ -1,3 +1,6 @@
+"""
+https://docs.cvat.ai/docs/api_sdk/sdk/reference/apis/server-api/
+"""
 import os
 import json
 import sys
@@ -56,75 +59,3 @@ class ServerAPI:
             "oauth": config.oauth,
             "cloud_storage": config.cloud_storage
         }
-    
-    def handle_request(self, request):
-        try:
-            action = request.get('action')
-            
-            if not action:
-                return {
-                    "status": "error",
-                    "message": "Action is required"
-                }
-            
-            # Server actions
-            if action == "get_server_info":
-                result = self.get_server_info()
-                return {
-                    "status": "success",
-                    "message": "Server info retrieved successfully",
-                    "data": result
-                }
-            elif action == "get_server_health":
-                result = self.get_server_health()
-                return {
-                    "status": "success",
-                    "message": "Server health retrieved successfully",
-                    "data": result
-                }
-            elif action == "get_server_config":
-                result = self.get_server_config()
-                return {
-                    "status": "success",
-                    "message": "Server config retrieved successfully",
-                    "data": result
-                }
-            else:
-                return {
-                    "status": "error",
-                    "message": f"Action not supported: {action}"
-                }
-        except Exception as e:
-            return {
-                "status": "error",
-                "message": str(e)
-            }
-
-def main():
-    if len(sys.argv) != 2:
-        print(json.dumps({
-            "status": "error",
-            "message": "Expected exactly one argument: the JSON request"
-        }))
-        sys.exit(1)
-    
-    try:
-        request = json.loads(sys.argv[1])
-        api = ServerAPI()
-        response = api.handle_request(request)
-        print(json.dumps(response))
-    except json.JSONDecodeError:
-        print(json.dumps({
-            "status": "error",
-            "message": "Invalid JSON request"
-        }))
-        sys.exit(1)
-    except Exception as e:
-        print(json.dumps({
-            "status": "error",
-            "message": str(e)
-        }))
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
