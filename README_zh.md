@@ -12,7 +12,7 @@
 ## 要求
 
 - Python 3.7+
-- `cvat-cli` 包
+- `cvat-sdk` 包
 - Claude API 访问权限
 
 ## 安装

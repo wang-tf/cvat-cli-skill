@@ -12,7 +12,7 @@ A skill to interact with CVAT (Computer Vision Annotation Tool) via CLI, followi
 ## Requirements
 
 - Python 3.7+
-- `cvat-cli` package
+- `cvat-sdk` package
 - Claude API access
 
 ## Installation

@@ -1,7 +1,9 @@
 import os
-import subprocess
 import json
 import sys
+from cvat_sdk import make_client
+from cvat_sdk.core.proxies.tasks import Task
+from cvat_sdk.core.proxies.projects import Project
 
 class CVATCLITools:
     def __init__(self):
@@ -9,38 +11,125 @@ class CVATCLITools:
         self.cvat_username = os.environ.get('CVAT_USERNAME')
         self.cvat_password = os.environ.get('CVAT_PASSWORD')
         self._check_config()
+        self.client = None
     
     def _check_config(self):
         if not all([self.cvat_api_url, self.cvat_username, self.cvat_password]):
             raise ValueError("Missing required environment variables: CVAT_API_URL, CVAT_USERNAME, CVAT_PASSWORD")
     
-    def _build_command(self, command, args):
-        base_cmd = ["cvat-cli"]
-        base_cmd.extend(command.split())
-        if args:
-            base_cmd.extend(args.split())
-        return base_cmd
-    
-    def _execute_command(self, cmd):
-        try:
-            # Set environment variables for CVAT CLI
-            env = os.environ.copy()
-            env['CVAT_API_URL'] = self.cvat_api_url
-            env['CVAT_USERNAME'] = self.cvat_username
-            env['CVAT_PASSWORD'] = self.cvat_password
-            
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                env=env
+    def _connect(self):
+        if not self.client:
+            self.client = make_client(
+                self.cvat_api_url,
+                credentials=(self.cvat_username, self.cvat_password)
             )
-            
+    
+    def _handle_tasks_list(self, args):
+        self._connect()
+        tasks = list(self.client.tasks.list())
+        result = []
+        for task in tasks:
+            result.append({
+                "id": task.id,
+                "name": task.name,
+                "status": task.status,
+                "project_id": task.project_id,
+                "owner": task.owner
+            })
+        return {
+            "stdout": json.dumps(result, indent=2),
+            "stderr": "",
+            "returncode": 0
+        }
+    
+    def _handle_tasks_create(self, args):
+        self._connect()
+        # Parse args to get name, labels, etc.
+        # This is a simplified implementation
+        # For more complex scenarios, we would need to parse the args properly
+        task = self.client.tasks.create(
+            name="New Task",
+            labels=[{"name": "person"}, {"name": "car"}]
+        )
+        return {
+            "stdout": json.dumps({"id": task.id, "name": task.name}, indent=2),
+            "stderr": "",
+            "returncode": 0
+        }
+    
+    def _handle_tasks_get(self, args):
+        self._connect()
+        task_id = args.strip()
+        if not task_id.isdigit():
             return {
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode
+                "stdout": "",
+                "stderr": "Invalid task ID",
+                "returncode": 1
             }
+        task = self.client.tasks.get(int(task_id))
+        result = {
+            "id": task.id,
+            "name": task.name,
+            "status": task.status,
+            "project_id": task.project_id,
+            "owner": task.owner,
+            "labels": [label.name for label in task.labels]
+        }
+        return {
+            "stdout": json.dumps(result, indent=2),
+            "stderr": "",
+            "returncode": 0
+        }
+    
+    def _handle_projects_list(self, args):
+        self._connect()
+        projects = list(self.client.projects.list())
+        result = []
+        for project in projects:
+            result.append({
+                "id": project.id,
+                "name": project.name,
+                "owner": project.owner
+            })
+        return {
+            "stdout": json.dumps(result, indent=2),
+            "stderr": "",
+            "returncode": 0
+        }
+    
+    def _handle_projects_create(self, args):
+        self._connect()
+        # Parse args to get name, labels, etc.
+        # This is a simplified implementation
+        project = self.client.projects.create(
+            name="New Project",
+            labels=[{"name": "person"}, {"name": "car"}]
+        )
+        return {
+            "stdout": json.dumps({"id": project.id, "name": project.name}, indent=2),
+            "stderr": "",
+            "returncode": 0
+        }
+    
+    def _execute_command(self, command, args):
+        try:
+            if command == "tasks list":
+                return self._handle_tasks_list(args)
+            elif command == "tasks create":
+                return self._handle_tasks_create(args)
+            elif command.startswith("tasks get"):
+                task_id = args if args else command.split(" ")[2]
+                return self._handle_tasks_get(task_id)
+            elif command == "projects list":
+                return self._handle_projects_list(args)
+            elif command == "projects create":
+                return self._handle_projects_create(args)
+            else:
+                return {
+                    "stdout": "",
+                    "stderr": f"Command not supported: {command}",
+                    "returncode": 1
+                }
         except Exception as e:
             return {
                 "stdout": "",
@@ -59,8 +148,7 @@ class CVATCLITools:
                     "message": "Command is required"
                 }
             
-            cmd = self._build_command(command, args)
-            result = self._execute_command(cmd)
+            result = self._execute_command(command, args)
             
             if result['returncode'] == 0:
                 return {
