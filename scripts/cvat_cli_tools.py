@@ -91,58 +91,7 @@ class CVATCLITools:
         task.delete()
         return {"message": f"Task {task_id} deleted successfully"}
     
-    # Projects API
-    def list_projects(self, filters=None):
-        self._connect()
-        projects = list(self.client.projects.list(filters=filters))
-        result = []
-        for project in projects:
-            result.append({
-                "id": project.id,
-                "name": project.name,
-                "owner": project.owner,
-                "created_date": project.created_date.isoformat() if project.created_date else None
-            })
-        return result
-    
-    def get_project(self, project_id):
-        self._connect()
-        project = self.client.projects.get(project_id)
-        return {
-            "id": project.id,
-            "name": project.name,
-            "owner": project.owner,
-            "created_date": project.created_date.isoformat() if project.created_date else None,
-            "labels": [label.name for label in project.labels]
-        }
-    
-    def create_project(self, name, labels=None):
-        self._connect()
-        project = self.client.projects.create(
-            name=name,
-            labels=labels or [{"name": "object"}]
-        )
-        return {
-            "id": project.id,
-            "name": project.name
-        }
-    
-    def update_project(self, project_id, name=None):
-        self._connect()
-        project = self.client.projects.get(project_id)
-        if name:
-            project.name = name
-        project.update()
-        return {
-            "id": project.id,
-            "name": project.name
-        }
-    
-    def delete_project(self, project_id):
-        self._connect()
-        project = self.client.projects.get(project_id)
-        project.delete()
-        return {"message": f"Project {project_id} deleted successfully"}
+
     
     # Jobs API
     def list_jobs(self, filters=None):
