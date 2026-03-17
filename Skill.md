@@ -5,6 +5,7 @@ dependencies:
   - cvat-sdk
 scripts:
   - scripts/cvat_cli_tools.py
+  - scripts/lambda_api.py
 ---
 
 # CVAT SDK Skill
@@ -75,6 +76,30 @@ To use this skill, provide a JSON object with the following parameters:
 #### Implementations
 - `list_implementations`: List all implementations
 
+#### Lambda Functions
+- `list_lambdas`: List all lambda functions
+  - Optional: `filters` - Filter criteria
+- `get_lambda`: Get lambda function details
+  - Required: `lambda_id` - Lambda function ID
+- `create_lambda`: Create a new lambda function
+  - Required: `name` - Lambda function name
+  - Required: `runtime` - Runtime environment
+  - Required: `entrypoint` - Entrypoint function
+  - Optional: `description` - Description
+  - Optional: `memory_limit` - Memory limit (default: 128)
+  - Optional: `timeout` - Timeout in seconds (default: 30)
+- `update_lambda`: Update a lambda function
+  - Required: `lambda_id` - Lambda function ID
+  - Optional: `name` - New name
+  - Optional: `description` - New description
+  - Optional: `memory_limit` - New memory limit
+  - Optional: `timeout` - New timeout
+- `delete_lambda`: Delete a lambda function
+  - Required: `lambda_id` - Lambda function ID
+- `upload_lambda_code`: Upload code to a lambda function
+  - Required: `lambda_id` - Lambda function ID
+  - Required: `code_path` - Path to code zip file
+
 ### Examples
 
 #### List tasks
@@ -98,6 +123,26 @@ To use this skill, provide a JSON object with the following parameters:
   "action": "create_project",
   "name": "New Project",
   "labels": [{"name": "person"}, {"name": "car"}]
+}
+```
+
+#### List lambda functions
+```json
+{
+  "action": "list_lambdas"
+}
+```
+
+#### Create a lambda function
+```json
+{
+  "action": "create_lambda",
+  "name": "My Lambda",
+  "runtime": "python3.8",
+  "entrypoint": "handler.main",
+  "description": "Test lambda function",
+  "memory_limit": 256,
+  "timeout": 60
 }
 ```
 

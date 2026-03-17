@@ -85,6 +85,14 @@ python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
 ### 实现
 - `list_implementations` - 列出所有实现
 
+### Lambda 函数
+- `list_lambdas` - 列出所有 lambda 函数
+- `get_lambda` - 获取 lambda 函数详情
+- `create_lambda` - 创建新的 lambda 函数
+- `update_lambda` - 更新 lambda 函数
+- `delete_lambda` - 删除 lambda 函数
+- `upload_lambda_code` - 上传代码到 lambda 函数
+
 ## 响应格式
 
 技能以 JSON 格式返回响应，结构如下：

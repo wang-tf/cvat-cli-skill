@@ -85,6 +85,14 @@ python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
 ### Implementations
 - `list_implementations` - List all implementations
 
+### Lambda Functions
+- `list_lambdas` - List all lambda functions
+- `get_lambda` - Get lambda function details
+- `create_lambda` - Create a new lambda function
+- `update_lambda` - Update a lambda function
+- `delete_lambda` - Delete a lambda function
+- `upload_lambda_code` - Upload code to a lambda function
+
 ## Response Format
 
 The skill returns responses in JSON format with the following structure:
