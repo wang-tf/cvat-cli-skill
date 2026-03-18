@@ -8,20 +8,20 @@ from cvat_sdk import make_client
 
 class EventsAPI:
     def __init__(self):
-        self.cvat_api_url = os.environ.get('CVAT_API_URL')
+        self.cvat_host = os.environ.get('CVAT_HOST') or os.environ.get('CVAT_API_URL')
         self.cvat_username = os.environ.get('CVAT_USERNAME')
         self.cvat_password = os.environ.get('CVAT_PASSWORD')
         self._check_config()
         self.client = None
     
     def _check_config(self):
-        if not all([self.cvat_api_url, self.cvat_username, self.cvat_password]):
-            raise ValueError("Missing required environment variables: CVAT_API_URL, CVAT_USERNAME, CVAT_PASSWORD")
+        if not all([self.cvat_host, self.cvat_username, self.cvat_password]):
+            raise ValueError("Missing required environment variables: CVAT_HOST (or CVAT_API_URL), CVAT_USERNAME, CVAT_PASSWORD")
     
     def _connect(self):
         if not self.client:
             self.client = make_client(
-                self.cvat_api_url,
+                self.cvat_host,
                 credentials=(self.cvat_username, self.cvat_password)
             )
     

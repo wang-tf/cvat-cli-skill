@@ -8,20 +8,20 @@ from cvat_sdk import make_client
 
 class AuthAPI:
     def __init__(self):
-        self.cvat_api_url = os.environ.get('CVAT_API_URL')
+        self.cvat_host = os.environ.get('CVAT_HOST') or os.environ.get('CVAT_API_URL')
         self.cvat_username = os.environ.get('CVAT_USERNAME')
         self.cvat_password = os.environ.get('CVAT_PASSWORD')
         self._check_config()
         self.client = None
     
     def _check_config(self):
-        if not self.cvat_api_url:
-            raise ValueError("Missing required environment variable: CVAT_API_URL")
+        if not self.cvat_host:
+            raise ValueError("Missing required environment variable: CVAT_HOST (or CVAT_API_URL)")
     
     def _connect(self, username=None, password=None):
         if not self.client:
             self.client = make_client(
-                self.cvat_api_url,
+                self.cvat_host,
                 credentials=(username or self.cvat_username, password or self.cvat_password)
             )
     
@@ -29,7 +29,7 @@ class AuthAPI:
     def login(self, username, password):
         # Create a new client with the provided credentials
         client = make_client(
-            self.cvat_api_url,
+            self.cvat_host,
             credentials=(username, password)
         )
         # Check if login was successful by accessing user info

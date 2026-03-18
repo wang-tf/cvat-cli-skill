@@ -1,26 +1,27 @@
-# CVAT SDK 技能
+# CVAT CLI 工具
 
-一个通过 CVAT SDK 与 CVAT（计算机视觉标注工具）交互的技能，遵循 Claude 自定义技能规范。
+一个通过命令行直接与 CVAT（计算机视觉标注工具）交互的工具，遵循 Claude 自定义技能规范。**无需编写 Python 脚本，直接使用命令行即可完成所有操作！**
 
 ## 功能
 
 - 全面访问 CVAT API 功能
 - 支持任务、项目、作业、用户和实现的管理
 - 通过环境变量进行配置
-- 适当的错误处理和响应格式
+- 简单直观的命令行界面
+- 内置帮助文档和使用示例
 
 ## 要求
 
 - Python 3.7+
 - `cvat-sdk` 包
-- Claude API 访问权限
+- Claude API 访问权限（如果作为技能使用）
 
 ## 安装
 
 1. 克隆此仓库：
    ```bash
-   git clone https://github.com/yourusername/cvat-sdk-skill.git
-   cd cvat-sdk-skill
+   git clone https://github.com/yourusername/cvat-cli.git
+   cd cvat-cli
    ```
 
 2. 安装依赖：
@@ -30,72 +31,100 @@
 
 3. 设置环境变量：
    ```bash
-   export CVAT_API_URL=https://your-cvat-instance/api/v1
+   export CVAT_HOST=https://your-cvat-instance
    export CVAT_USERNAME=your-username
    export CVAT_PASSWORD=your-password
    ```
 
-## 使用
+## 使用 - 命令行方式（强烈推荐）
 
-### 作为 Claude 技能
+**请使用 `cvat-cli.py` 命令行工具，无需编写 Python 脚本！**
+
+### 查看帮助
+
+```bash
+python cvat-cli.py --help
+```
+
+### 任务管理
+
+```bash
+# 列出所有任务
+python cvat-cli.py task list
+
+# 获取任务详情
+python cvat-cli.py task get --task-id 1
+
+# 创建新任务
+python cvat-cli.py task create --name "My Task" --project-id 2
+
+# 更新任务
+python cvat-cli.py task update --task-id 1 --name "New Name"
+
+# 删除任务
+python cvat-cli.py task delete --task-id 1
+```
+
+### 项目管理
+
+```bash
+# 列出所有项目
+python cvat-cli.py project list
+
+# 获取项目详情
+python cvat-cli.py project get --project-id 1
+
+# 创建新项目
+python cvat-cli.py project create --name "My Project"
+
+# 更新项目
+python cvat-cli.py project update --project-id 1 --name "New Name"
+
+# 删除项目
+python cvat-cli.py project delete --project-id 1
+```
+
+### 作业管理
+
+```bash
+# 列出所有作业
+python cvat-cli.py job list
+
+# 获取作业详情
+python cvat-cli.py job get --job-id 1
+```
+
+### 用户管理
+
+```bash
+# 列出所有用户
+python cvat-cli.py user list
+
+# 获取用户详情
+python cvat-cli.py user get --user-id 1
+```
+
+### 实现管理
+
+```bash
+# 列出所有实现
+python cvat-cli.py implementation list
+```
+
+## 作为 Claude 技能使用
 
 1. 将技能目录打包为 zip 文件
 2. 将其上传到 Claude 的技能管理界面
-3. 配置技能，填写您的 CVAT API URL、用户名和密码
-4. 在 Claude 对话中使用技能：
+3. 配置技能，填写您的 CVAT_HOST、用户名和密码
+4. 在 Claude 对话中使用技能时，**优先使用命令行方式**，例如：
    ```
-   @CVAT SDK Skill
-   {
-     "action": "list_tasks"
-   }
+   请帮我列出所有 CVAT 任务
    ```
-
-### 本地测试
-
-您可以通过以下命令在本地测试技能：
-
-```bash
-python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
-```
-
-## 支持的操作
-
-### 任务
-- `list_tasks` - 列出所有任务
-- `get_task` - 获取任务详情
-- `create_task` - 创建新任务
-- `update_task` - 更新任务
-- `delete_task` - 删除任务
-
-### 项目
-- `list_projects` - 列出所有项目
-- `get_project` - 获取项目详情
-- `create_project` - 创建新项目
-- `update_project` - 更新项目
-- `delete_project` - 删除项目
-
-### 作业
-- `list_jobs` - 列出所有作业
-- `get_job` - 获取作业详情
-
-### 用户
-- `list_users` - 列出所有用户
-- `get_user` - 获取用户详情
-
-### 实现
-- `list_implementations` - 列出所有实现
-
-### Lambda 函数
-- `list_lambdas` - 列出所有 lambda 函数
-- `get_lambda` - 获取 lambda 函数详情
-- `create_lambda` - 创建新的 lambda 函数
-- `update_lambda` - 更新 lambda 函数
-- `delete_lambda` - 删除 lambda 函数
-- `upload_lambda_code` - 上传代码到 lambda 函数
+   Claude 会自动使用 `cvat-cli.py task list` 命令完成，而不是编写 Python 脚本。
 
 ## 响应格式
 
-技能以 JSON 格式返回响应，结构如下：
+命令输出格式为 JSON，结构如下：
 
 ```json
 {
@@ -105,12 +134,20 @@ python scripts/cvat_cli_tools.py '{"action": "list_tasks"}'
 }
 ```
 
+## 为什么使用命令行而不是 Python 脚本？
+
+1. **更简单直接**：无需编写、保存和执行 Python 脚本文件
+2. **更快的工作流**：一条命令即可完成任务
+3. **更少的错误**：不需要处理脚本文件路径、导入等问题
+4. **更易于自动化**：可以轻松集成到 shell 脚本和 CI/CD 流程中
+5. **更好的用户体验**：内置的帮助文档和命令补全支持
+
 ## 故障排除
 
 - **缺少环境变量**：确保设置了所有必需的环境变量
 - **CVAT SDK 未找到**：确保安装了 `cvat-sdk`
-- **认证错误**：验证您的 CVAT API URL、用户名和密码
-- **API 错误**：检查响应中的 `message` 字段获取错误详情
+- **认证错误**：验证您的 CVAT_HOST、用户名和密码
+- **API 错误**：检查输出中的 `message` 字段获取错误详情
 
 ## 许可证
 

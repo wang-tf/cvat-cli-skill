@@ -8,26 +8,26 @@ from cvat_sdk import make_client
 
 class ServerAPI:
     def __init__(self):
-        self.cvat_api_url = os.environ.get('CVAT_API_URL')
+        self.cvat_host = os.environ.get('CVAT_HOST') or os.environ.get('CVAT_API_URL')
         self.cvat_username = os.environ.get('CVAT_USERNAME')
         self.cvat_password = os.environ.get('CVAT_PASSWORD')
         self._check_config()
         self.client = None
     
     def _check_config(self):
-        if not self.cvat_api_url:
-            raise ValueError("Missing required environment variable: CVAT_API_URL")
+        if not self.cvat_host:
+            raise ValueError("Missing required environment variable: CVAT_HOST (or CVAT_API_URL)")
     
     def _connect(self):
         if not self.client:
             # For server API, we can use an unauthenticated client if needed
             if self.cvat_username and self.cvat_password:
                 self.client = make_client(
-                    self.cvat_api_url,
+                    self.cvat_host,
                     credentials=(self.cvat_username, self.cvat_password)
                 )
             else:
-                self.client = make_client(self.cvat_api_url)
+                self.client = make_client(self.cvat_host)
     
     # Server API
     def get_server_info(self):
